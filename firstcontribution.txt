@@ -1,0 +1,116 @@
+package Android;
+
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
+
+import io.appium.java_client.android.AndroidDriver;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+@Listeners({ ScreenshotUtility.class})
+public class signIn {
+	
+	@SuppressWarnings("rawtypes")
+	
+	static	AndroidDriver driver;
+	
+  @SuppressWarnings("rawtypes")
+
+  @BeforeTest
+  public void initialize() throws MalformedURLException {
+	 System.out.println("Start Initialization");
+	 System.out.println("");
+
+	 // Created Object
+	 DesiredCapabilities capabilities = new DesiredCapabilities();
+	 
+	 // Set device Name
+	 capabilities.setCapability("deviceName", "Android Emulator");
+	 
+	 // Set Browser Name
+	 capabilities.setCapability("browserName", "Android");
+	 
+	 // Set Version
+	 capabilities.setCapability("platformVersion", "6.0");
+	 
+	 // Set Platform
+	 capabilities.setCapability("platformName", "Android");
+	 
+	 // Set appPackage
+	 capabilities.setCapability("appPackage", "com.iiinc.kite");
+	 
+	 // Set appActivity
+	 capabilities.setCapability("appActivity", "com.iiinc.kite.modules.SignUpSignInActivity");
+	 
+	 // Set appium Server address and Port Number
+	 driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+	 
+	 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+  }
+  
+  @Test(priority = 1)
+  public void TestForPass() throws InterruptedException{
+	 
+	 driver.findElement(By.id("com.iiinc.kite:id/signInButton")).click();
+	 
+	// driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	// Enter Phone Number
+	 driver.findElement(By.id("com.iiinc.kite:id/phoneNumberEditText")).sendKeys("9891646504");
+	 
+	// driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	 
+	 // Enter the Password
+	 driver.findElement(By.id("com.iiinc.kite:id/passwordEditText")).sendKeys("t@nvI1#$");
+	 
+	 driver.navigate().back();
+	 
+	 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	 
+	 // Click on SignIn button
+	 driver.findElement(By.id("com.iiinc.kite:id/signInButton")).click();
+	 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	 System.out.println("You are Logged In Successfully");
+	 
+	 WebElement toggle = driver.findElement(By.className("android.widget.ImageButton"));
+	 
+	 if(toggle.isDisplayed()){
+		 toggle.click();
+		 driver.scrollTo("SETTINGS").click();
+	
+	 }else {
+		 System.out.println("There is NO Network");
+		 onAlert();
+	 }
+	  
+	 driver.scrollToExact("Sign Out").click();
+	 driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+	 System.out.println("Sign out functionality is not working");
+	 onAlert();
+	 System.out.println("CLose App");
+	 System.out.println("Test Case 1 is completed");
+	 System.out.println("");
+	 driver.closeApp();
+	 	 
+  }
+	 
+  public void onAlert(){
+	 driver.scrollTo("Error Contacting Server! Check your Network Connection and Try again!");
+	 driver.findElement(By.name("Error Contacting Server! Check your Network Connection and Try again!")).click();
+	 String result = driver.findElementById("com.iiinc.kite:id/content").getText();
+	 System.out.println("Alert Text is " +result);
+	 driver.findElement(By.name("OK")).click();
+  }
+  
+  @AfterTest
+  public void End(){
+	 driver.quit();
+  }
+  
+}
